@@ -118,7 +118,7 @@ sub nextFile() {
     my $chapternum = sprintf( '%02i', $iterator );
     my $filename = $chapternum . '-' . $name . $SUFFIX;  
     print 'Filename: ' . $filename . "\n";
-    print $jsonfile qq|    "${filename}",\n|;
+    print $jsonfile qq|,\n    "${filename}"|;
 
     $fh = FileHandle->new( $filename, 'w' )
         || die;
@@ -136,13 +136,15 @@ sub readJsonFile {
     while( $line = <JSON> ) {
         $pre .= $line;
         if( $line =~ /toc.html/ ) {
+            # Remove the training comma
+            $pre =~ s/,\s*$//;
             last;
         }
     }
     # Ignore lines until closure
     while( $line = <JSON> ) {
         if( $line =~ /^\s*],\s*$/ ) {
-            $post = $line;
+            $post = "\n" . $line;
             last;
         }
     }
