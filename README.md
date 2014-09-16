@@ -9,15 +9,13 @@ I used these scripts when working on the Learning Puppet book for O'Reilly Media
 
 My favorite writing tool is Scrivener http://www.literatureandlatte.com/scrivener.php
 
-I created a Scrivener compile format which set up chapter headings correctly with a link 
-target above them as recommended. Then I wrote some scripts to process the output from 
-Scrivener compile to make HTMLBook in the flavor that O'Reilly wanted.
+I created a Scrivener compile format which formats chapter names and id tags correctly.
+Then I wrote some scripts to process the output from Scrivener compile to make HTMLBook.
 
 ## Requirements
 
-* **MacPorts** http://www.macports.org/install.php
-
-otherwise unknown as of yet
+* Scrivener
+* Git
 
 ## How to Use
 
@@ -27,14 +25,13 @@ otherwise unknown as of yet
 
 ```
 $ cd /where/is/the/htmlbook/repo
-$ /usr/local/scrivener-htmlbook/process.sh /scrivenings/MyBook.scriv
+$ /usr/local/scrivener-htmlbook/process.sh /scrivenings/MyBook.txt
 ```
 
 ## Future Plans
 
-1. Call a local atlas build optionally
-2. Rewrite the atlas.json file dynamically.
-3. Do git add on new files
+1. Do git add on new files
+2. Call a local atlas build optionally
 
 I am willing to accept suggestions and patches should anyone get more
 creative than I have been.
