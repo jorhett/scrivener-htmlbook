@@ -45,7 +45,7 @@ while( $line = <INPUT> ) {
         $idlabel =~ s/[^\w\-]//g;
 
         # Either way print out both lines and proceed
-        print $OUTPUTFH "${opening} id="${idlabel}">${remainder}\n";
+        print $OUTPUTFH qq|${opening} id="${idlabel}">${remainder}\n|;
         next;
     }
 
@@ -61,19 +61,32 @@ while( $line = <INPUT> ) {
     elsif( $line =~ m|^<div data-type="part">| ) {
         # See if the next line is a front or end matter
         my $nextline = <INPUT>;
-        $nextline =~ m|^<h1>([\w\s\-]+)</h1>$|;
-        my $heading = $1;
-        if( $sectionmatter{ $1 } ) {
-            # Change file handles
-            $OUTPUTFH = &nextFile( $ATLAS_JSON, $OUTPUTFH, ++$iterator, $sectionmatter{ $1 } );
-            print $OUTPUTFH qq|<section data-type="$sectionmatter{ $1 }">|;
-            print $OUTPUTFH $nextline;
+        if( $nextline =~ m|^\s*<h1 id="([^"]+)">([\w\s\-]+)</h1>\s*$| ) {
+            my $idlabel = $1;
+            my $heading = $2;
+
+            if( $sectionmatter{ $1 } ) {
+                # Change file handles
+                $OUTPUTFH = &nextFile( $ATLAS_JSON, $OUTPUTFH, ++$iterator, $sectionmatter{ $1 } );
+                print $OUTPUTFH qq|<section data-type="$sectionmatter{ $1 }">|;
+            }
+            else {
+                # If not, print out the original line
+                print $OUTPUTFH $line;
+            }
+
+            # First, fix any IDs that have spaces or non-alpha characters
+            $idlabel =~ s/\s/_/g;
+            $idlabel =~ s/[^\w\-]//g;
+
+            # Print out the revised label
+            print $OUTPUTFH qq|  <h1 id="${idlabel}">${heading}</h1>\n|;
+            next;
         }
         else {
-            # If not, print out both lines and proceed
+            # Either way print out both lines and proceed
             print $OUTPUTFH $line . $nextline;
         }
-        next;
     }
 
     # Otherwise just print the line
