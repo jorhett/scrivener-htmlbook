@@ -30,6 +30,7 @@ $ /usr/local/scrivener-htmlbook/process.sh /scrivenings/MyBook.txt
 
 ## Future Plans
 
+1. Need to track tag status and close div and section tags.
 1. Do git add on new files
 2. Call a local atlas build optionally
 

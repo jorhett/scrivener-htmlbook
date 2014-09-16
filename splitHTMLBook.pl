@@ -58,21 +58,20 @@ while( $line = <INPUT> ) {
     }
 
     # Parse out top-level elements
-    elsif( $line =~ m|^<div data-type="part">| ) {
+    elsif( $line =~ m|^\s*<section data-type="top-level-element">| ) {
         # See if the next line is a front or end matter
         my $nextline = <INPUT>;
         if( $nextline =~ m|^\s*<h1 id="([^"]+)">([\w\s\-]+)</h1>\s*$| ) {
             my $idlabel = $1;
             my $heading = $2;
 
-            if( $sectionmatter{ $1 } ) {
+            if( $sectionmatter{ $heading } ) {
                 # Change file handles
                 $OUTPUTFH = &nextFile( $ATLAS_JSON, $OUTPUTFH, ++$iterator, $sectionmatter{ $1 } );
-                print $OUTPUTFH qq|<section data-type="$sectionmatter{ $1 }">|;
+                print $OUTPUTFH qq|<section data-type="$sectionmatter{ $heading }">|;
             }
             else {
-                # If not, print out the original line
-                print $OUTPUTFH $line;
+                die "Found top-level section element which isn't an HTMLBook front or end matter: $heading\n";
             }
 
             # First, fix any IDs that have spaces or non-alpha characters
@@ -84,8 +83,7 @@ while( $line = <INPUT> ) {
             next;
         }
         else {
-            # Either way print out both lines and proceed
-            print $OUTPUTFH $line . $nextline;
+            die "Found top-level section element which isn't formatted correctly.\n";
         }
     }
 

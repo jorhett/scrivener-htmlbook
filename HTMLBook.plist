@@ -327,8 +327,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
 			<string>&lt;div data-type="part"&gt;
-  &lt;h1 id="&lt;$title&gt;"&gt;&lt;$title&gt;&lt;/h1&gt;
-</string>
+  &lt;h1 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
 			BAtzdHJlYW10eXBlZIHoA4QBQISEhBNOU011dGFibGVEaWN0aW9u
@@ -342,7 +341,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitleSuffixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitleSuffixKey</key>
-			<string>&lt;/div&gt;
+			<string>&lt;/h1&gt;
 </string>
 		</dict>
 		<dict>
@@ -460,8 +459,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
 			<string>&lt;section data-type="chapter"&gt;
-  &lt;h1 id="&lt;$title&gt;"&gt;&lt;$title&gt;&lt;/h1&gt;
-</string>
+  &lt;h1 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
 			BAtzdHJlYW10eXBlZIHoA4QBQISEhBNOU011dGFibGVEaWN0aW9u
@@ -475,7 +473,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitleSuffixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitleSuffixKey</key>
-			<string>&lt;/section&gt;
+			<string>&lt;/h1&gt;
 </string>
 		</dict>
 		<dict>
@@ -593,8 +591,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
 			<string>&lt;section data-type="sect1"&gt;
-  &lt;h1 id="&lt;$title&gt;"&gt;&lt;$title&gt;&lt;/h1&gt;
-</string>
+  &lt;h1 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
 			BAtzdHJlYW10eXBlZIHoA4QBQISEhBNOU011dGFibGVEaWN0aW9u
@@ -608,7 +605,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitleSuffixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitleSuffixKey</key>
-			<string>&lt;/section&gt;
+			<string>&lt;/h1&gt;
 </string>
 		</dict>
 		<dict>
@@ -726,8 +723,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
 			<string>&lt;section data-type="sect2"&gt;
-  &lt;h2 id="&lt;$title&gt;"&gt;&lt;$title&gt;&lt;/h2&gt;
-</string>
+  &lt;h2 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
 			BAtzdHJlYW10eXBlZIHoA4QBQISEhBNOU011dGFibGVEaWN0aW9u
@@ -741,7 +737,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitleSuffixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitleSuffixKey</key>
-			<string>&lt;/section&gt;
+			<string>&lt;/h2&gt;
 </string>
 		</dict>
 		<dict>
@@ -859,8 +855,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
 			<string>&lt;section data-type="sect3"&gt;
-  &lt;h3 id="&lt;$title&gt;"&gt;&lt;$title&gt;&lt;/h3&gt;
-</string>
+  &lt;h3 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
 			BAtzdHJlYW10eXBlZIHoA4QBQISEhBNOU011dGFibGVEaWN0aW9u
@@ -874,7 +869,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitleSuffixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitleSuffixKey</key>
-			<string>&lt;/section&gt;
+			<string>&lt;/h3&gt;
 </string>
 		</dict>
 	</array>
@@ -1454,9 +1449,8 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitlePrefixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
-			<string>&lt;div data-type="part"&gt;
-  &lt;h1 id="&lt;$title&gt;"&gt;&lt;$title&gt;&lt;/h1&gt;
-</string>
+			<string>&lt;section data-type="top-level-element"&gt;
+  &lt;h1 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
 			BAtzdHJlYW10eXBlZIHoA4QBQISEhBNOU011dGFibGVEaWN0aW9u
@@ -1470,7 +1464,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitleSuffixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitleSuffixKey</key>
-			<string>&lt;/div&gt;
+			<string>&lt;/h1&gt;
 </string>
 		</dict>
 		<dict>
@@ -1588,8 +1582,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
 			<string>&lt;section data-type="sect1"&gt;
-  &lt;h1 id="&lt;$title&gt;"&gt;&lt;$title&gt;&lt;/h1&gt;
-</string>
+  &lt;h1 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
 			BAtzdHJlYW10eXBlZIHoA4QBQISEhBNOU011dGFibGVEaWN0aW9u
@@ -1603,7 +1596,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitleSuffixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitleSuffixKey</key>
-			<string>&lt;/section&gt;
+			<string>&lt;/h1&gt;
 </string>
 		</dict>
 		<dict>
@@ -1721,8 +1714,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
 			<string>&lt;section data-type="sect2"&gt;
-  &lt;h2 id="&lt;$title&gt;"&gt;&lt;$title&gt;&lt;/h2&gt;
-</string>
+  &lt;h2 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
 			BAtzdHJlYW10eXBlZIHoA4QBQISEhBNOU011dGFibGVEaWN0aW9u
@@ -1736,7 +1728,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitleSuffixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitleSuffixKey</key>
-			<string>&lt;/section&gt;
+			<string>&lt;/h2&gt;
 </string>
 		</dict>
 		<dict>
@@ -1854,8 +1846,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
 			<string>&lt;section data-type="sect3"&gt;
-  &lt;h3 id="&lt;$title&gt;"&gt;&lt;$title&gt;&lt;/h3&gt;
-</string>
+  &lt;h3 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
 			BAtzdHJlYW10eXBlZIHoA4QBQISEhBNOU011dGFibGVEaWN0aW9u
@@ -1869,7 +1860,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitleSuffixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitleSuffixKey</key>
-			<string>&lt;/section&gt;
+			<string>&lt;/h3&gt;
 </string>
 		</dict>
 		<dict>
@@ -1987,8 +1978,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
 			<string>&lt;section data-type="sect4"&gt;
-  &lt;h4 id="&lt;$title&gt;"&gt;&lt;$title&gt;&lt;/h4&gt;
-</string>
+  &lt;h4 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
 			BAtzdHJlYW10eXBlZIHoA4QBQISEhBNOU011dGFibGVEaWN0aW9u
@@ -2002,7 +1992,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitleSuffixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitleSuffixKey</key>
-			<string>&lt;/section&gt;
+			<string>&lt;/h4&gt;
 </string>
 		</dict>
 	</array>
@@ -2124,9 +2114,8 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitlePrefixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
-			<string>&lt;div data-type="part"&gt;
-  &lt;h1 id="&lt;$title&gt;"&gt;&lt;$title&gt;&lt;/h1&gt;
-</string>
+			<string>&lt;section data-type="top-level-element"&gt;
+  &lt;h1 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
 			BAtzdHJlYW10eXBlZIHoA4QBQISEhBNOU011dGFibGVEaWN0aW9u
@@ -2140,7 +2129,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitleSuffixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitleSuffixKey</key>
-			<string>&lt;/div&gt;
+			<string>&lt;/h1&gt;
 </string>
 		</dict>
 		<dict>
@@ -2258,8 +2247,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
 			<string>&lt;section data-type="sect1"&gt;
-  &lt;h1 id="&lt;$title&gt;"&gt;&lt;$title&gt;&lt;/h1&gt;
-</string>
+  &lt;h1 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
 			BAtzdHJlYW10eXBlZIHoA4QBQISEhBNOU011dGFibGVEaWN0aW9u
@@ -2273,7 +2261,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitleSuffixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitleSuffixKey</key>
-			<string>&lt;/section&gt;
+			<string>&lt;/h1&gt;
 </string>
 		</dict>
 		<dict>
@@ -2391,8 +2379,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
 			<string>&lt;section data-type="sect2"&gt;
-  &lt;h2 id="&lt;$title&gt;"&gt;&lt;$title&gt;&lt;/h2&gt;
-</string>
+  &lt;h2 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
 			BAtzdHJlYW10eXBlZIHoA4QBQISEhBNOU011dGFibGVEaWN0aW9u
@@ -2406,7 +2393,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitleSuffixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitleSuffixKey</key>
-			<string>&lt;/section&gt;
+			<string>&lt;/h2&gt;
 </string>
 		</dict>
 		<dict>
@@ -2524,8 +2511,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
 			<string>&lt;section data-type="sect3"&gt;
-  &lt;h3 id="&lt;$title&gt;"&gt;&lt;$title&gt;&lt;/h3&gt;
-</string>
+  &lt;h3 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
 			BAtzdHJlYW10eXBlZIHoA4QBQISEhBNOU011dGFibGVEaWN0aW9u
@@ -2539,7 +2525,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitleSuffixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitleSuffixKey</key>
-			<string>&lt;/section&gt;
+			<string>&lt;/h3&gt;
 </string>
 		</dict>
 		<dict>
@@ -2657,8 +2643,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
 			<string>&lt;section data-type="sect4"&gt;
-  &lt;h4 id="&lt;$title&gt;"&gt;&lt;$title&gt;&lt;/h4&gt;
-</string>
+  &lt;h4 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
 			BAtzdHJlYW10eXBlZIHoA4QBQISEhBNOU011dGFibGVEaWN0aW9u
@@ -2672,7 +2657,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitleSuffixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitleSuffixKey</key>
-			<string>&lt;/section&gt;
+			<string>&lt;/h4&gt;
 </string>
 		</dict>
 	</array>
