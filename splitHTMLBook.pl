@@ -1,10 +1,27 @@
 #!/usr/bin/perl -w
 use strict;
 use FileHandle;
+my $DEBUG = 0;
+if( $ARGV[0] eq '-d' ) {
+    $DEBUG = 1;
+    shift( @ARGV );
+}
 
-our $SOURCEFILE = $ARGV[0];
+my $SOURCEFILE = $ARGV[0];
+if( ! $SOURCEFILE ) {
+    die "ERROR: Must supply the output file name from Scrivener.\n\nUsage: splitHTMLBook.pl compiled-book.txt\n";
+}
+if( ! -f $SOURCEFILE ) {
+    die "ERROR: Unable to read file: $SOURCEFILE\n";
+}
+if( ! -f 'atlas.json' ) {
+    die "ERROR: Unable to read file: atlas.json\nAre you in the book directory?\n";
+}
+
 print 'Source: ' . $SOURCEFILE . "\n";
-our $SUFFIX = '.html';
+my $SUFFIX = '.html';
+my $SECTIONDEPTH = -1;
+my $FILENUM = 3;           # All chapters come after 3 (table of contents)
 
 # Get the start and end of the Json file
 my( $pre, $post ) = &readJsonFile( 'atlas.json' );
@@ -18,9 +35,6 @@ open( INPUT, "<${SOURCEFILE}" )
 # Read past the start of the preface
 my $OUTPUTFH = FileHandle->new( 'pre-book-start.html', 'w' );
 
-# All chapters come after 3 (table of contents)
-my $iterator = 3;
-
 # Front and end matter elements
 my %sectionmatter = (
     'Preface'           => 'preface',
@@ -32,11 +46,46 @@ my %sectionmatter = (
     'Colophon'          => 'colophon',
 );
 
-# Now create a loop that outputs each line, starting a new file after each chapter or part break
+# Start a loop that outputs each line, starting a new file after each chapter or part break
 my $line;
+my $linenum = 0;
 while( $line = <INPUT> ) {
+    $linenum++;
+
+    # If section level changes, close off the previous section
+    if( $line =~ m|^\s*<section data-type="sect(\d+)">| ) {
+        my $depth = $1;
+        print $OUTPUTFH &closeSection( $depth, $linenum );
+
+        # Output the line
+        print $OUTPUTFH $line;
+        next;
+    }
+
+    # If we start a new part, close off the previous section 0
+    elsif( $line =~ m|^\s*<div data-type="part">| ) {
+        print $OUTPUTFH &closeSection( 0, $linenum );
+
+        # Output the line
+        print "LINE $linenum: Started new book part.\n" if $DEBUG;
+        print $OUTPUTFH $line;
+        next;
+    }
+
+    # Change filehandles at each chapter start
+    elsif( $line =~ m|^<section data-type="chapter">| ) {
+        # Close off the previous section
+        print $OUTPUTFH &closeSection( 1, $linenum );
+
+        # Change file handles
+        $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, ++$FILENUM );
+        print $OUTPUTFH $line;
+        print "LINE $linenum: Started new chapter.\n" if $DEBUG;
+        next;
+    }
+
     # Fix all IDs to make valid link targets
-    if( $line =~ m|^(\s*<h\d) id="([^"]+)">(.*)$| ) {
+    elsif( $line =~ m|^(\s*<h\d) id="([^"]+)">(.*)$| ) {
         # First, fix any IDs that have spaces or non-alpha characters
         my $opening = $1;
         my $idlabel = $2;
@@ -49,17 +98,13 @@ while( $line = <INPUT> ) {
         next;
     }
 
-    # Change filehandles at each chapter start
-    elsif( $line =~ m|^<section data-type="chapter">| ) {
-        # Change file handles
-        $OUTPUTFH = &nextFile( $ATLAS_JSON, $OUTPUTFH, ++$iterator );
-        print $OUTPUTFH $line;
-        next;
-    }
-
     # Parse out top-level elements
     elsif( $line =~ m|^\s*<section data-type="top-level-element">| ) {
+        # Close off the previous section
+        print $OUTPUTFH &closeSection( 0, $linenum );
+
         # See if the next line is a front or end matter
+        $linenum++;
         my $nextline = <INPUT>;
         if( $nextline =~ m|^\s*<h1 id="([^"]+)">([\w\s\-]+)</h1>\s*$| ) {
             my $idlabel = $1;
@@ -67,11 +112,11 @@ while( $line = <INPUT> ) {
 
             if( $sectionmatter{ $heading } ) {
                 # Change file handles
-                $OUTPUTFH = &nextFile( $ATLAS_JSON, $OUTPUTFH, ++$iterator, $sectionmatter{ $1 } );
+                $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, ++$FILENUM, $sectionmatter{ $1 } );
                 print $OUTPUTFH qq|<section data-type="$sectionmatter{ $heading }">|;
             }
             else {
-                die "Found top-level section element which isn't an HTMLBook front or end matter: $heading\n";
+                die "ERROR at LINE $linenum: Found top-level section element which isn't an HTMLBook front or end matter: $heading\n";
             }
 
             # First, fix any IDs that have spaces or non-alpha characters
@@ -83,7 +128,7 @@ while( $line = <INPUT> ) {
             next;
         }
         else {
-            die "Found top-level section element which isn't formatted correctly.\n";
+            die "ERROR at LINE $linenum: Found top-level section element which isn't formatted correctly.\n";
         }
     }
 
@@ -92,7 +137,9 @@ while( $line = <INPUT> ) {
         print $OUTPUTFH $line;
     }
 }
+print $OUTPUTFH "</section>\n";
 $OUTPUTFH->close();
+print "LINE $linenum: Finished book.\n" if $DEBUG;
 
 print $ATLAS_JSON $post;
 $ATLAS_JSON->close();
@@ -102,10 +149,41 @@ close( INPUT )
 
 exit 0;
 
+sub closeSection() {
+    use vars qw( $DEBUG $SECTIONDEPTH );
+    my $newdepth = shift;
+    my $linenum = shift;
+    my $text = '';
+    #print "SECTIONDEPTH = $SECTIONDEPTH, newdepth = $newdepth\n" if $DEBUG;
+
+    if( $newdepth > $SECTIONDEPTH ) {
+        print "LINE $linenum: Entering section level $newdepth\n" if $DEBUG;
+    }
+    elsif( $newdepth == $SECTIONDEPTH ) {
+        $text .= " " x $newdepth . "</section>\n";
+        print "LINE $linenum: Starting new section level $newdepth\n" if $DEBUG;
+    }
+    # $newdepth < $SECTIONDEPTH ) {
+    else {
+        # Close out the current section and any levels in between
+        # e.g. from 3 up to 1 is closing 3, 2, and previous 1...
+        my $uplevels = $SECTIONDEPTH - $newdepth + 1;
+        for( my $uplevel = $SECTIONDEPTH; $uplevel >= $newdepth ; $uplevel-- ) {
+            $text .= " " x $uplevel . "</section>\n";
+            print "LINE $linenum: Closed out section level $uplevel\n" if $DEBUG && ( $uplevel != $newdepth );
+        }
+        print "LINE $linenum: Starting new section level $newdepth\n" if $DEBUG;
+    }
+    $SECTIONDEPTH = $newdepth;
+    #print "Section depth $newdepth\n" if $DEBUG;
+
+    return $text;
+}
+
 sub nextFile() {
     use vars qw( $SUFFIX );
-    my $jsonfile = shift;
     my $fh = shift;
+    my $jsonfile = shift;
     my $iterator = shift;
     my $name = shift || 'chapter';
 
@@ -121,6 +199,7 @@ sub nextFile() {
     $fh = FileHandle->new( $filename, 'w' )
         || die;
 
+    print "Started new file $filename\n" if $DEBUG;
     return $fh;
 }
 
