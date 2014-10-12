@@ -326,7 +326,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitlePrefixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
-			<string>&lt;div data-type="part"&gt;
+			<string>&lt;section data-type="chapter"&gt;
   &lt;h1 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
@@ -458,7 +458,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitlePrefixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
-			<string>&lt;section data-type="chapter"&gt;
+			<string>&lt;section data-type="sect1"&gt;
   &lt;h1 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
@@ -590,7 +590,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitlePrefixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
-			<string>&lt;section data-type="sect1"&gt;
+			<string>&lt;section data-type="sect2"&gt;
   &lt;h1 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
@@ -722,7 +722,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitlePrefixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
-			<string>&lt;section data-type="sect2"&gt;
+			<string>&lt;section data-type="sect3"&gt;
   &lt;h2 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>
@@ -854,7 +854,7 @@ p.shot {text-align:left; text-indent:0; margin: 12pt 0pt 0pt 0pt; text-transform
 			<key>SCRTitlePrefixCaseKey</key>
 			<integer>0</integer>
 			<key>SCRTitlePrefixKey</key>
-			<string>&lt;section data-type="sect3"&gt;
+			<string>&lt;section data-type="sect4"&gt;
   &lt;h3 id="&lt;$title&gt;"&gt;</string>
 			<key>SCRTitleSuffixAttributesKey</key>
 			<data>

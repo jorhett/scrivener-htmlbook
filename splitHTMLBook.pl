@@ -20,13 +20,14 @@ if( ! -f 'atlas.json' ) {
 
 print 'Source: ' . $SOURCEFILE . "\n";
 my $SUFFIX = '.html';
-my $SECTIONDEPTH = -1;
+my $SECTION_DEPTH = -1;
+my $LEVEL0_IS_DIV = 0;
 my $FILENUM = 3;           # All chapters come after 3 (table of contents)
 
 # Get the start and end of the Json file
 my( $pre, $post ) = &readJsonFile( 'atlas.json' );
 # Start rewriting the Json file
-my $ATLAS_JSON = FileHandle->new( 'atlas.json', 'w' );
+my $ATLAS_JSON = FileHandle->new( 'atlas.json.new', 'w' );
 print $ATLAS_JSON $pre;
 
 open( INPUT, "<${SOURCEFILE}" )
@@ -62,25 +63,16 @@ while( $line = <INPUT> ) {
         next;
     }
 
-    # If we start a new part, close off the previous section 0
-    elsif( $line =~ m|^\s*<div data-type="part">| ) {
-        print $OUTPUTFH &closeSection( 0, $linenum );
-
-        # Output the line
-        print "LINE $linenum: Started new book part.\n" if $DEBUG;
-        print $OUTPUTFH $line;
-        next;
-    }
-
     # Change filehandles at each chapter start
     elsif( $line =~ m|^<section data-type="chapter">| ) {
         # Close off the previous section
-        print $OUTPUTFH &closeSection( 1, $linenum );
+        print $OUTPUTFH &closeSection( 0, $linenum );
+        $LEVEL0_IS_DIV = 0;
 
+        print "LINE $linenum: Starting new chapter.\n" if $DEBUG;
         # Change file handles
         $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, ++$FILENUM );
         print $OUTPUTFH $line;
-        print "LINE $linenum: Started new chapter.\n" if $DEBUG;
         next;
     }
 
@@ -102,21 +94,33 @@ while( $line = <INPUT> ) {
     elsif( $line =~ m|^\s*<section data-type="top-level-element">| ) {
         # Close off the previous section
         print $OUTPUTFH &closeSection( 0, $linenum );
+        $LEVEL0_IS_DIV = 0;
 
         # See if the next line is a front or end matter
         $linenum++;
         my $nextline = <INPUT>;
-        if( $nextline =~ m|^\s*<h1 id="([^"]+)">([\w\s\-]+)</h1>\s*$| ) {
+        if( $nextline =~ m|^\s*<h1 id="([^"]+)">([\w\s\:\-]+)</h1>\s*$| ) {
             my $idlabel = $1;
             my $heading = $2;
 
             if( $sectionmatter{ $heading } ) {
                 # Change file handles
                 $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, ++$FILENUM, $sectionmatter{ $1 } );
-                print $OUTPUTFH qq|<section data-type="$sectionmatter{ $heading }">|;
+                print $OUTPUTFH qq|<section data-type="$sectionmatter{ $heading }">\n|;
             }
+
+            # Is this a new book part?
+            elsif( $heading =~ /^part\s+/i ) {
+                $LEVEL0_IS_DIV = 1;
+
+                # Output the line
+                print "LINE $linenum: Starting new book part.\n" if $DEBUG;
+                $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, ++$FILENUM, 'part' );
+                print $OUTPUTFH qq|<div data-type="part">\n|;
+            }
+
             else {
-                die "ERROR at LINE $linenum: Found top-level section element which isn't an HTMLBook front or end matter: $heading\n";
+                die "ERROR at LINE $linenum: Found top-level section element which isn't a new part, nor HTMLBook front or end matter: $heading\n";
             }
 
             # First, fix any IDs that have spaces or non-alpha characters
@@ -143,6 +147,8 @@ print "LINE $linenum: Finished book.\n" if $DEBUG;
 
 print $ATLAS_JSON $post;
 $ATLAS_JSON->close();
+rename 'atlas.json.new', 'atlas.json'
+    || die "ERROR: Unable to install new atlas file $? $!\n";
 
 close( INPUT )
     or die;
@@ -150,32 +156,42 @@ close( INPUT )
 exit 0;
 
 sub closeSection() {
-    use vars qw( $DEBUG $SECTIONDEPTH );
+    use vars qw( $DEBUG $SECTION_DEPTH $LEVEL0_IS_DIV );
     my $newdepth = shift;
     my $linenum = shift;
     my $text = '';
-    #print "SECTIONDEPTH = $SECTIONDEPTH, newdepth = $newdepth\n" if $DEBUG;
 
-    if( $newdepth > $SECTIONDEPTH ) {
+    # Now do the right thing for the various changes
+    if( $newdepth > $SECTION_DEPTH ) {
         print "LINE $linenum: Entering section level $newdepth\n" if $DEBUG;
     }
-    elsif( $newdepth == $SECTIONDEPTH ) {
-        $text .= " " x $newdepth . "</section>\n";
-        print "LINE $linenum: Starting new section level $newdepth\n" if $DEBUG;
-    }
-    # $newdepth < $SECTIONDEPTH ) {
     else {
-        # Close out the current section and any levels in between
-        # e.g. from 3 up to 1 is closing 3, 2, and previous 1...
-        my $uplevels = $SECTIONDEPTH - $newdepth + 1;
-        for( my $uplevel = $SECTIONDEPTH; $uplevel >= $newdepth ; $uplevel-- ) {
-            $text .= " " x $uplevel . "</section>\n";
-            print "LINE $linenum: Closed out section level $uplevel\n" if $DEBUG && ( $uplevel != $newdepth );
+        if( $newdepth < $SECTION_DEPTH ) {
+            # Close out the current section and any levels in between
+            # e.g. from 3 up to 1 is closing 3, 2, and previous 1...
+            my $uplevels = $SECTION_DEPTH - $newdepth + 1;
+            for( my $uplevel = $SECTION_DEPTH; $uplevel > $newdepth ; $uplevel-- ) {
+                $text .= "</section> <!-- closing sect${uplevel} -->\n";
+                print "LINE $linenum: Closed out section level $uplevel\n" if $DEBUG;
+            }
         }
+        # At this point section depth and new depth are equal, now close current depth
+        # We have to handle 0-depth book parts are divs not sections
+        if( $newdepth == 0 ) {
+            if( $LEVEL0_IS_DIV ) {
+                $text .= "</div> <!-- closing book part -->\n";
+            }
+            else {
+                $text .= "</section> <!-- closing chapter, frontmatter, or backmatter -->\n";
+            }
+        }
+        else { 
+            $text .= "</section> <!-- closing sect${newdepth} -->\n";
+        }
+
         print "LINE $linenum: Starting new section level $newdepth\n" if $DEBUG;
     }
-    $SECTIONDEPTH = $newdepth;
-    #print "Section depth $newdepth\n" if $DEBUG;
+    $SECTION_DEPTH = $newdepth;
 
     return $text;
 }
@@ -199,7 +215,6 @@ sub nextFile() {
     $fh = FileHandle->new( $filename, 'w' )
         || die;
 
-    print "Started new file $filename\n" if $DEBUG;
     return $fh;
 }
 
@@ -225,7 +240,7 @@ sub readJsonFile {
             last;
         }
     }
-    # Read in the formats, theme, and title
+    # Read in everything after the files
     while( $line = <JSON> ) {
         $post .= $line;
     }
