@@ -109,8 +109,8 @@ while( $line = <INPUT> ) {
                 print $OUTPUTFH qq|<section data-type="$sectionmatter{ $heading }">\n|;
             }
 
-            # Is this a new book part?
-            elsif( $heading =~ /^part\s+/i ) {
+            # Is this a new book part? Strip the "part" text
+            elsif( $heading =~ s/^part\s+[^:]+:\s+//i ) {
                 $LEVEL0_IS_DIV = 1;
 
                 # Output the line
