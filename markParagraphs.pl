@@ -34,13 +34,13 @@ close( INPUT )
     or die;
 
 # Prevent adding paragraphs to pre blocks
-$fulltext =~ s|(<pre ?[^>]*>.*)\n\n(.*</pre>)|$1\n<!-- PRE -->\n$2|gs;
+$fulltext =~ s|(<pre ?[^>]*?>.*?)\n\n(.*?</pre>)|$1\n<!-- PRE -->\n$2|gs;
 
 # Add paragraphs to everything that looks like a paragraph
-$fulltext =~ s|\n\n([\w]+[^\n]+)\n\n|\n\n<p>$1</p>\n\n|gs;
+while( $fulltext =~ s|\n\n([\w]+[^\n]+)\n\n|\n\n<p>$1</p>\n\n|gs ) {}
 
 # Add paragraphs to things that start with an internal anchor
-$fulltext =~ s|\n\n(<a href="#[\w]+[^\n]+)\n\n|\n\n<p>$1</p>\n\n|gs;
+while( $fulltext =~ s|\n\n(<a href="#[\w]+[^\n]+)\n\n|\n\n<p>$1</p>\n\n|gs ) {}
 
 # Remove the pre-comments
 $fulltext =~ s|\n<!-- PRE -->\n|\n\n|gs;
