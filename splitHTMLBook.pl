@@ -40,7 +40,8 @@ my $OUTPUTFH = FileHandle->new( 'pre-book-start.html', 'w' );
 my %sectionmatter = (
     'Preface'           => 'preface',
     'Foreword'          => 'foreword',
-    'Introduction'      => 'introduction',
+#    'Introduction'      => 'introduction',
+    'Introduction'      => 'preface',
     'Afterword'         => 'afterword',
     'Acknowledgements'  => 'acknowledgements',
     'Conclusion'        => 'conclusion',
@@ -105,7 +106,7 @@ while( $line = <INPUT> ) {
 
             if( $sectionmatter{ $heading } ) {
                 # Change file handles
-                $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, ++$FILENUM, $sectionmatter{ $1 } );
+                $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, ++$FILENUM, $heading );
                 print $OUTPUTFH qq|<section data-type="$sectionmatter{ $heading }">\n|;
             }
 
@@ -208,7 +209,7 @@ sub nextFile() {
     }
 
     my $chapternum = sprintf( '%02i', $iterator );
-    my $filename = $chapternum . '-' . $name . $SUFFIX;  
+    my $filename = $chapternum . '-' . lc $name . $SUFFIX;  
     print 'Filename: ' . $filename . "\n";
     print $jsonfile qq|,\n    "${filename}"|;
 
