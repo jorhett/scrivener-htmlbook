@@ -120,6 +120,17 @@ while( $line = <INPUT> ) {
                 print $OUTPUTFH qq|<div data-type="part">\n|;
             }
 
+            # Is this a new book part? Strip the "part" text
+            elsif( $heading =~ s/^appendix\s+([\w]+):\s+//i ) {
+                my $appname = lc $1;
+                $LEVEL0_IS_DIV = 0;
+
+                # Output the line
+                print "LINE $linenum: Starting Appendix $appname.\n" if $DEBUG;
+                $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, ++$FILENUM, "appendix_${appname}" );
+                print $OUTPUTFH qq|<section data-type="appendix" id="appendix_${appname}">\n|;
+            }
+
             else {
                 die "ERROR at LINE $linenum: Found top-level section element which isn't a new part, nor HTMLBook front or end matter: $heading\n";
             }
