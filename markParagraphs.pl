@@ -36,8 +36,12 @@ close( INPUT )
 # Prevent adding paragraphs to pre blocks
 $fulltext =~ s|(<pre [^>]*?>)(.*?)(</pre>)|$1 . &addBreak( $2 ) . $3|egs;
 
+# Add paragraphs to things inside an aside
+while( $fulltext =~ s|\n\n(<aside data-type="\w+">\s*)([\w]+.*?)\s*\n\n|\n\n$1<p>$2</p>\n\n|gs ) {}
+
 # Add paragraphs to everything that looks like a paragraph
 while( $fulltext =~ s|\n\n([\w]+.*?)\s*\n\n|\n\n<p>$1</p>\n\n|gs ) {}
+while( $fulltext =~ s|(\s*)</aside></p>|</p>$1</aside>|gs ) {}
 
 # Add paragraphs to things that start with an internal anchor
 while( $fulltext =~ s|\n\n(<a href="#[\w]+.*?)\s*\n\n|\n\n<p>$1</p>\n\n|gs ) {}
