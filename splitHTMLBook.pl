@@ -78,7 +78,7 @@ while( $line = <INPUT> ) {
     }
 
     # Fix all IDs to make valid link targets
-    elsif( $line =~ m|^(\s*<h\d) id="([^"]+)">(.*)$| ) {
+    elsif( $line =~ m|^\s*(<h\d) id="([^"]+)">(.*)$| ) {
         # First, fix any IDs that have spaces or non-alpha characters
         my $opening = $1;
         my $idlabel = $2;
@@ -140,7 +140,7 @@ while( $line = <INPUT> ) {
             $idlabel =~ s/[^\w\-]//g;
 
             # Print out the revised label
-            print $OUTPUTFH qq|  <h1 id="${idlabel}">${heading}</h1>\n|;
+            print $OUTPUTFH qq|<h1 id="${idlabel}">${heading}</h1>\n|;
             next;
         }
         else {
@@ -183,7 +183,7 @@ sub closeSection() {
             # e.g. from 3 up to 1 is closing 3, 2, and previous 1...
             my $uplevels = $SECTION_DEPTH - $newdepth + 1;
             for( my $uplevel = $SECTION_DEPTH; $uplevel > $newdepth ; $uplevel-- ) {
-                $text .= "</section> <!-- closing sect${uplevel} -->\n";
+                $text .= "</section>\n<!-- closing sect${uplevel} -->\n";
                 print "LINE $linenum: Closed out section level $uplevel\n" if $DEBUG;
             }
         }
@@ -191,14 +191,14 @@ sub closeSection() {
         # We have to handle 0-depth book parts are divs not sections
         if( $newdepth == 0 ) {
             if( $LEVEL0_IS_DIV ) {
-                $text .= "</div> <!-- closing book part -->\n";
+                $text .= "</div>\n<!-- closing book part -->\n";
             }
             else {
-                $text .= "</section> <!-- closing chapter, frontmatter, or backmatter -->\n";
+                $text .= "</section>\n<!-- closing chapter, frontmatter, or backmatter -->\n";
             }
         }
         else { 
-            $text .= "</section> <!-- closing sect${newdepth} -->\n";
+            $text .= "</section>\n<!-- closing sect${newdepth} -->\n";
         }
 
         print "LINE $linenum: Starting new section level $newdepth\n" if $DEBUG;
