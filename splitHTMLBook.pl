@@ -36,18 +36,6 @@ open( INPUT, "<${SOURCEFILE}" )
 # Read past the start of the preface
 my $OUTPUTFH = FileHandle->new( 'pre-book-start.html', 'w' );
 
-# Front and end matter elements
-my %sectionmatter = (
-    'Preface'           => 'preface',
-    'Foreword'          => 'foreword',
-#    'Introduction'      => 'introduction',  # O'Reilly doesn't use this yet
-    'Introduction'      => 'preface',
-    'Afterword'         => 'afterword',
-    'Acknowledgements'  => 'acknowledgements',
-    'Conclusion'        => 'conclusion',
-    'Colophon'          => 'colophon',
-);
-
 # Start a loop that outputs each line, starting a new file after each chapter or part break
 while( my $line = <INPUT> ) {
     if( $line =~ m|^<section data-type="sect| ) {
@@ -62,14 +50,13 @@ while( my $line = <INPUT> ) {
         my $name = $1;
         $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, $name, 'appendix' );
     }
-    elsif( $line =~ m|^<div data-type="part" id="part_(\w+)">|i ) {
+    elsif( $line =~ m|^<div data-type="part" id="part_([\w]+)"|i ) {
         my $name = $1;
         $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, $name, 'part' );
     }
-    elsif( $line =~ m|^<section data-type="(\w+)" id="(\w+)">| ) {
-        my $type = $1;
-        my $name = $2;
-        $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, $name, $type );
+    elsif( $line =~ m|^<section data-type="\w+" id="(\w+)">| ) {
+        my $name = $1;
+        $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, ++$FILENUM, $name );
     }
 
     # Now print the line regardless

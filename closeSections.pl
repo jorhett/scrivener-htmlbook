@@ -95,7 +95,7 @@ while( $line = <INPUT> ) {
 
             # Output the line
             print "LINE $linenum: Starting book Part ${partnum}.\n" if $DEBUG;
-            print $OUTPUTFH qq|<div data-type="part" id="${idlabel}" xmlns="http://www.w3.org/1999/xhtml">\n|;
+            print $OUTPUTFH qq|<div data-type="part" id="part_${partnum}" xmlns="http://www.w3.org/1999/xhtml">\n|;
         }
 
         # Is this an appendix?
@@ -105,7 +105,7 @@ while( $line = <INPUT> ) {
 
             # Output the line
             print "LINE $linenum: Starting Appendix $appname.\n" if $DEBUG;
-            print $OUTPUTFH qq|<section data-type="appendix" id="${idlabel}">\n|;
+            print $OUTPUTFH qq|<section data-type="appendix" id="appendix_${appname}">\n|;
         }
 
         else {
