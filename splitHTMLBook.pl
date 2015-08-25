@@ -40,7 +40,7 @@ my $OUTPUTFH = FileHandle->new( 'pre-book-start.html', 'w' );
 my %sectionmatter = (
     'Preface'           => 'preface',
     'Foreword'          => 'foreword',
-#    'Introduction'      => 'introduction',
+#    'Introduction'      => 'introduction',  # O'Reilly doesn't use this yet
     'Introduction'      => 'preface',
     'Afterword'         => 'afterword',
     'Acknowledgements'  => 'acknowledgements',
@@ -49,113 +49,33 @@ my %sectionmatter = (
 );
 
 # Start a loop that outputs each line, starting a new file after each chapter or part break
-my $line;
-my $linenum = 0;
-while( $line = <INPUT> ) {
-    $linenum++;
-
-    # If section level changes, close off the previous section
-    if( $line =~ m|^\s*<section data-type="sect(\d+)">| ) {
-        my $depth = $1;
-        print $OUTPUTFH &closeSection( $depth, $linenum );
-
-        # Output the line
-        print $OUTPUTFH $line;
-        next;
+while( my $line = <INPUT> ) {
+    if( $line =~ m|^<section data-type="sect| ) {
+       # Do nothing special for lower-level sections
     }
 
-    # Change filehandles at each chapter start
-    elsif( $line =~ m|^<section data-type="chapter">| ) {
-        # Close off the previous section
-        print $OUTPUTFH &closeSection( 0, $linenum );
-        $LEVEL0_IS_DIV = 0;
-
-        print "LINE $linenum: Starting new chapter.\n" if $DEBUG;
-        # Change file handles
+    # Change filehandles at each chapter/part/heading start
+    elsif( $line =~ m|^<section data-type="chapter" | ) {
         $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, ++$FILENUM );
-        print $OUTPUTFH $line;
-        next;
+    }
+    elsif( $line =~ m|^<section data-type="appendix" id="appendix_(\w+)">|i ) {
+        my $name = $1;
+        $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, $name, 'appendix' );
+    }
+    elsif( $line =~ m|^<div data-type="part" id="part_(\w+)">|i ) {
+        my $name = $1;
+        $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, $name, 'part' );
+    }
+    elsif( $line =~ m|^<section data-type="(\w+)" id="(\w+)">| ) {
+        my $type = $1;
+        my $name = $2;
+        $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, $name, $type );
     }
 
-    # Fix all IDs to make valid link targets
-    elsif( $line =~ m|^\s*(<h\d) id="([^"]+)">(.*)$| ) {
-        # First, fix any IDs that have spaces or non-alpha characters
-        my $opening = $1;
-        my $idlabel = $2;
-        my $remainder = $3;
-        $idlabel =~ s/\s/_/g;
-        $idlabel =~ s/[^\w\-]//g;
-
-        # Either way print out both lines and proceed
-        print $OUTPUTFH qq|${opening} id="${idlabel}">${remainder}\n|;
-        next;
-    }
-
-    # Parse out top-level elements
-    elsif( $line =~ m|^\s*<section data-type="top-level-element">| ) {
-        # Close off the previous section
-        print $OUTPUTFH &closeSection( 0, $linenum );
-        $LEVEL0_IS_DIV = 0;
-
-        # See if the next line is a front or end matter
-        $linenum++;
-        my $nextline = <INPUT>;
-        if( $nextline =~ m|^\s*<h1 id="([^"]+)">([\w\s\:\-]+)</h1>\s*$| ) {
-            my $idlabel = $1;
-            my $heading = $2;
-
-            if( $sectionmatter{ $heading } ) {
-                # Change file handles
-                $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, ++$FILENUM, $heading );
-                print $OUTPUTFH qq|<section data-type="$sectionmatter{ $heading }">\n|;
-            }
-
-            # Is this a new book part? Strip the "part" text
-            elsif( $heading =~ s/^part\s+[^:]+:\s+//i ) {
-                $LEVEL0_IS_DIV = 1;
-
-                # Output the line
-                print "LINE $linenum: Starting new book part.\n" if $DEBUG;
-                $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, ++$FILENUM, 'part' );
-                print $OUTPUTFH qq|<div data-type="part">\n|;
-            }
-
-            # Is this a new book part? Strip the "part" text
-            elsif( $heading =~ s/^appendix\s+([\w]+):\s+//i ) {
-                my $appname = lc $1;
-                $LEVEL0_IS_DIV = 0;
-
-                # Output the line
-                print "LINE $linenum: Starting Appendix $appname.\n" if $DEBUG;
-                $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, ++$FILENUM, "appendix_${appname}" );
-                print $OUTPUTFH qq|<section data-type="appendix" id="appendix_${appname}">\n|;
-            }
-
-            else {
-                die "ERROR at LINE $linenum: Found top-level section element which isn't a new part, nor HTMLBook front or end matter: $heading\n";
-            }
-
-            # First, fix any IDs that have spaces or non-alpha characters
-            $idlabel =~ s/\s/_/g;
-            $idlabel =~ s/[^\w\-]//g;
-
-            # Print out the revised label
-            print $OUTPUTFH qq|<h1 id="${idlabel}">${heading}</h1>\n|;
-            next;
-        }
-        else {
-            die "ERROR at LINE $linenum: Found top-level section element which isn't formatted correctly.\n";
-        }
-    }
-
-    # Otherwise just print the line
-    else {
-        print $OUTPUTFH $line;
-    }
+    # Now print the line regardless
+    print $OUTPUTFH $line;
 }
-print $OUTPUTFH "</section>\n";
 $OUTPUTFH->close();
-print "LINE $linenum: Finished book.\n" if $DEBUG;
 
 print $ATLAS_JSON $post;
 $ATLAS_JSON->close();
@@ -166,47 +86,6 @@ close( INPUT )
     or die;
 
 exit 0;
-
-sub closeSection() {
-    use vars qw( $DEBUG $SECTION_DEPTH $LEVEL0_IS_DIV );
-    my $newdepth = shift;
-    my $linenum = shift;
-    my $text = '';
-
-    # Now do the right thing for the various changes
-    if( $newdepth > $SECTION_DEPTH ) {
-        print "LINE $linenum: Entering section level $newdepth\n" if $DEBUG;
-    }
-    else {
-        if( $newdepth < $SECTION_DEPTH ) {
-            # Close out the current section and any levels in between
-            # e.g. from 3 up to 1 is closing 3, 2, and previous 1...
-            my $uplevels = $SECTION_DEPTH - $newdepth + 1;
-            for( my $uplevel = $SECTION_DEPTH; $uplevel > $newdepth ; $uplevel-- ) {
-                $text .= "</section>\n<!-- closing sect${uplevel} -->\n";
-                print "LINE $linenum: Closed out section level $uplevel\n" if $DEBUG;
-            }
-        }
-        # At this point section depth and new depth are equal, now close current depth
-        # We have to handle 0-depth book parts are divs not sections
-        if( $newdepth == 0 ) {
-            if( $LEVEL0_IS_DIV ) {
-                $text .= "</div>\n<!-- closing book part -->\n";
-            }
-            else {
-                $text .= "</section>\n<!-- closing chapter, frontmatter, or backmatter -->\n";
-            }
-        }
-        else { 
-            $text .= "</section>\n<!-- closing sect${newdepth} -->\n";
-        }
-
-        print "LINE $linenum: Starting new section level $newdepth\n" if $DEBUG;
-    }
-    $SECTION_DEPTH = $newdepth;
-
-    return $text;
-}
 
 sub nextFile() {
     use vars qw( $SUFFIX );
@@ -219,8 +98,14 @@ sub nextFile() {
         $fh->close();
     }
 
-    my $chapternum = sprintf( '%02i', $iterator );
-    my $filename = $chapternum . '-' . lc $name . $SUFFIX;  
+    my $identifier;
+    if( ( $name eq 'part' ) || ( $name eq 'appendix' ) ) {
+      $identifier = sprintf( '%s', $iterator );
+    }
+    else {
+      $identifier = sprintf( '%02i', $iterator );
+    }
+    my $filename = $identifier . '-' . lc $name . $SUFFIX;  
     print 'Filename: ' . $filename . "\n";
     print $jsonfile qq|,\n    "${filename}"|;
 

@@ -22,8 +22,6 @@ if( -f $OUTFILE ) {
     print "WARNING: Overwriting existing temp file: $OUTFILE\n";
 }
 
-my $IS_IN_PRE = 0;
-
 my $fulltext;
 open( INPUT, "<${SOURCEFILE}" )
     or die "Unable to read sourcefile: ${SOURCEFILE}\n";
