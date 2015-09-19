@@ -42,6 +42,7 @@ my %sectionmatter = (
 my $line;
 my $linenum = 0;
 my $LEVEL0_IS_DIV = 0;
+my $STRIP_NEXT_HEADER = 0;
 while( $line = <INPUT> ) {
     $linenum++;
 
@@ -70,6 +71,11 @@ while( $line = <INPUT> ) {
         next;
     }
 
+    elsif( $STRIP_NEXT_HEADER && $line =~ s/^(\s*<h1>)Part\s+\w+:\s+/$1/i ) {
+        $STRIP_NEXT_HEADER = 0;
+        print $OUTPUTFH $line;
+    }
+
     # Parse out top-level elements
     elsif( $line =~ m|^\s*<section data-type="top-level-element" id="([^"]+)">| ) {
         my $title = $1;
@@ -92,6 +98,7 @@ while( $line = <INPUT> ) {
         elsif( $title =~ s/^part\s+([^:]+):\s+//i ) {
             my $partnum = $1;
             $LEVEL0_IS_DIV = 1;
+            $STRIP_NEXT_HEADER = 1;
 
             # Output the line
             print "LINE $linenum: Starting book Part ${partnum}.\n" if $DEBUG;
