@@ -31,6 +31,9 @@ while( <INPUT> ) {
 close( INPUT )
     or die;
 
+# Add linefeeds to the end (Scrivener strips it) for paragraph identification purposes
+$fulltext .= "\n\n\n";
+
 # Prevent adding paragraphs to pre blocks
 $fulltext =~ s|(<pre [^>]*?>)(.*?)(</pre>)|$1 . &addBreak( $2 ) . $3|egs;
 
