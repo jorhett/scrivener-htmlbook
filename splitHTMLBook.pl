@@ -43,18 +43,18 @@ while( my $line = <INPUT> ) {
     }
 
     # Change filehandles at each chapter/part/heading start
-    elsif( $line =~ m|^<section data-type="chapter" | ) {
+    elsif( $line =~ m|^<section xmlns="(?:[^"]+)" data-type="chapter" | ) {
         $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, ++$FILENUM );
     }
-    elsif( $line =~ m|^<section data-type="appendix" id="appendix_(\w+)">|i ) {
+    elsif( $line =~ m|^<section xmlns="(?:[^"]+)" data-type="appendix" id="appendix_(\w+)">|i ) {
         my $name = $1;
         $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, $name, 'appendix' );
     }
-    elsif( $line =~ m|^<div data-type="part" id="part_([\w]+)"|i ) {
+    elsif( $line =~ m|^<div xmlns="(?:[^"]+)" data-type="part"\s*(?:[\w\=\"]*) id="part_([\w]+)"|i ) {
         my $name = $1;
         $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, $name, 'part' );
     }
-    elsif( $line =~ m|^<section data-type="\w+" id="(\w+)">| ) {
+    elsif( $line =~ m|^<section xmlns="(?:[^"]+)" data-type="\w+" id="(\w+)">| ) {
         my $name = $1;
         $OUTPUTFH = &nextFile( $OUTPUTFH, $ATLAS_JSON, ++$FILENUM, $name );
     }

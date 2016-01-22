@@ -58,8 +58,9 @@ while( $line = <INPUT> ) {
     }
 
     # Change filehandles at each chapter start
-    elsif( $line =~ m|^<section data-type="chapter" id="([^"]+)">| ) {
-        my $idlabel = &cleanIdLabel( $1 );
+    elsif( $line =~ m|^<section xmlns="([^"]+)" data-type="chapter" id="([^"]+)">| ) {
+        my $namespace = $1;
+        my $idlabel = &cleanIdLabel( $2 );
 
         # Close off the previous section
         print $OUTPUTFH &closeSection( 0, $linenum );
@@ -67,7 +68,7 @@ while( $line = <INPUT> ) {
 
         print "LINE $linenum: Starting new chapter.\n" if $DEBUG;
         print "LINE $linenum: Starting chapter id=${idlabel}\n" if $DEBUG;
-        print $OUTPUTFH qq|<section data-type="chapter" id="${idlabel}">\n|;
+        print $OUTPUTFH qq|<section xmlns="${namespace}" data-type="chapter" id="${idlabel}">\n|;
         next;
     }
 
@@ -77,8 +78,9 @@ while( $line = <INPUT> ) {
     }
 
     # Parse out top-level elements
-    elsif( $line =~ m|^\s*<section data-type="top-level-element" id="([^"]+)">| ) {
-        my $title = $1;
+    elsif( $line =~ m|^\s*<section xmlns="([^"]+)" data-type="top-level-element" id="([^"]+)">| ) {
+        my $namespace = $1;
+        my $title = $2;
         my $idlabel = $title;
 
         # Ensure the ID label is html-safe
@@ -90,7 +92,7 @@ while( $line = <INPUT> ) {
 
         # if this is front or end matter
         if( $sectionmatter{ $title } ) {
-            print $OUTPUTFH qq|<section data-type="$sectionmatter{ $title }" id="${idlabel}">\n|;
+            print $OUTPUTFH qq|<section xmlns="${namespace}" data-type="$sectionmatter{ $title }" id="${idlabel}">\n|;
             next;
         }
 
@@ -100,9 +102,15 @@ while( $line = <INPUT> ) {
             $LEVEL0_IS_DIV = 1;
             $STRIP_NEXT_HEADER = 1;
 
+            # Restart pages at first part
+            my $optional = '';
+            if( $partnum eq 'I' ) {
+                $optional = ' class="pagenumrestart"';
+            }
+
             # Output the line
             print "LINE $linenum: Starting book Part ${partnum}.\n" if $DEBUG;
-            print $OUTPUTFH qq|<div data-type="part" id="part_${partnum}" xmlns="http://www.w3.org/1999/xhtml">\n|;
+            print $OUTPUTFH qq|<div xmlns="${namespace}" data-type="part"${optional} id="part_${partnum}">\n|;
         }
 
         # Is this an appendix?
@@ -112,7 +120,7 @@ while( $line = <INPUT> ) {
 
             # Output the line
             print "LINE $linenum: Starting Appendix $appname.\n" if $DEBUG;
-            print $OUTPUTFH qq|<section data-type="appendix" id="appendix_${appname}">\n|;
+            print $OUTPUTFH qq|<section xmlns="${namespace}" data-type="appendix" id="appendix_${appname}">\n|;
         }
 
         else {
@@ -169,7 +177,7 @@ sub closeSection() {
                 $LEVEL0_IS_DIV = 0;
             }
             else {
-                $text .= "</section>\n<!-- closing chapter, frontmatter, or backmatter -->\n";
+                $text .= "</section><!-- closing chapter, frontmatter, or backmatter -->\n";
             }
         }
         else { 

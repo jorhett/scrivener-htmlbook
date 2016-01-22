@@ -41,7 +41,11 @@ $fulltext =~ s|(<pre [^>]*?>)(.*?)(</pre>)|$1 . &addBreak( $2 ) . $3|egs;
 while( $fulltext =~ s|\n\n(<aside data-type="\w+">\s*)([\w]+.*?)\s*\n\n|\n\n$1<p>$2</p>\n\n|gs ) {}
 
 # Add paragraphs to things starting with an anchor
-while( $fulltext =~ s|\n\n(<a href="[\w]+.*?)\s*\n\n|\n\n<p>$1</p>\n\n|gs ) {}
+while( $fulltext =~ s#\n\n(<a (href|data-type)="[\w]+.*?)\s*\n\n#\n\n<p>$1</p>\n\n#gs ) {}
+
+# Fix anchors?
+# F: <a href="#([\w\-\:\.]+)">([\w\s\-\:\.]+)</a>
+# R: <a data-type="xref" href='#$1'>#$1</a>
 
 # Add paragraphs to everything that looks like a paragraph
 while( $fulltext =~ s|\n\n([\w\.]+.*?)\s*\n\n|\n\n<p>$1</p>\n\n|gs ) {}
