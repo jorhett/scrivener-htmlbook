@@ -72,7 +72,7 @@ while( $line = <INPUT> ) {
         next;
     }
 
-    elsif( $STRIP_NEXT_HEADER && $line =~ s/^(\s*<h1>)Part\s+\w+:\s+/$1/i ) {
+    elsif( $STRIP_NEXT_HEADER && $line =~ s/^(\s*<h1>)(?:Part|Appendix)\s+\w+:\s+/$1/i ) {
         $STRIP_NEXT_HEADER = 0;
         print $OUTPUTFH $line;
     }
@@ -117,6 +117,7 @@ while( $line = <INPUT> ) {
         elsif( $title =~ s/^appendix\s+([\w]+):\s+//i ) {
             my $appname = $1;
             $LEVEL0_IS_DIV = 0;
+            $STRIP_NEXT_HEADER = 1;
 
             # Output the line
             print "LINE $linenum: Starting Appendix $appname.\n" if $DEBUG;
