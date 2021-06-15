@@ -1,15 +1,29 @@
 scrivener-htmlbook
 ==================
 
-A Scrivener compile format and some scripts to produce HTMLBook for O'Reilly publications.
+A Scrivener 2 compile format, and some scripts to produce HTMLBook for O'Reilly Atlas publishing system.
+
+## This is not supported for Scrivener 3+
+
+You can use it with Scrivener v2 and if it works for you, great.  From what I can find, absolutely nothing KB and I
+discussed back when I created this integration was addressed, the compile mechanism appears to be even less suited
+to customized output, and support’s response to my query was a blowoff pointer to an empty page with a mention of
+an Scrivener example book they haven’t even updated for Scrivener 3.
+
+As L&L has made abundantly clear that they aren’t interested in supporting use cases that would make their editor 
+sufficient for the entire delivery chain, I’m not going to invest even more time trying to fight this editor to output
+something we can mangle. What they have is totally capable of managing the entire editing process through delivery,
+but they clearly have no interested in supporting it.
+
+Further, it's never been more than a one-way output and those limitations make it implausible for updating the book...
 
 ## Reason for existing
 
 I used these scripts when working on the Learning Puppet book for O'Reilly Media.
 
-My favorite writing tool is Scrivener http://www.literatureandlatte.com/scrivener.php
+My favorite writing tool was Scrivener http://www.literatureandlatte.com/scrivener.php
 
-I created a Scrivener compile format which formats chapter names and id tags correctly.
+I created a Scrivener 2 compile format which formats chapter names and id tags correctly.
 Then I wrote some scripts to process the output from Scrivener compile to make HTMLBook.
 
 ## Requirements
